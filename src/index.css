@@ -9,6 +9,8 @@
 
   body {
     font-family: var(--font-body);
+    background-color: #f3f6fb;
+    color: #0f172a;
   }
 
   h1, h2, h3, h4, .font-display {
@@ -30,3 +32,51 @@
 .animate-route-dash {
   animation: routeDash 1.4s linear infinite;
 }
+
+@keyframes sosPulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  70% {
+    transform: scale(1.035, 1.14);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.035, 1.14);
+    opacity: 0;
+  }
+}
+
+@keyframes sosTriggerBreathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.012);
+  }
+}
+
+.sos-pulse-ring {
+  animation: sosPulseRing 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.sos-trigger-active {
+  animation: sosTriggerBreathe 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+.sos-trigger-active:hover,
+.sos-trigger-active:focus-visible {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sos-pulse-ring,
+  .sos-trigger-active,
+  .animate-route-dash {
+    animation: none;
+  }
+}
+

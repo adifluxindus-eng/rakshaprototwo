@@ -207,17 +207,17 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
 
   if (!authenticated) {
     return (
-      <div className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
+      <div className="mx-auto w-full max-w-md rounded-[24px] border border-slate-200/80 bg-white p-7 shadow-[0_4px_20px_rgba(15,23,42,0.05)]">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0F4C9C] text-white shadow-xs">
             <Shield className="h-5 w-5" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-slate-900 font-display">
-              Admin &amp; Hospital Command Login
+              Command Center Authentication
             </h2>
             <p className="text-xs text-slate-500">
-              Monitor live SOS WebSockets, add hospitals, and dispatch ambulances
+              Access live emergency dispatch, trauma capacity, and fleet routing
             </p>
           </div>
         </div>
@@ -225,7 +225,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
         <form onSubmit={handleLogin} className="mt-5 space-y-3.5">
           <div>
             <label htmlFor="admin-email" className="block text-xs font-medium text-slate-700">
-              Command Email
+              Operator Email
             </label>
             <input
               id="admin-email"
@@ -233,7 +233,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3.5 py-2.5 text-sm text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
             />
           </div>
           <div>
@@ -246,31 +246,31 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 font-mono focus:border-slate-900 focus:outline-none"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3.5 py-2.5 text-sm text-slate-900 font-mono focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
             />
           </div>
 
           {loginError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
               {loginError}
             </div>
           )}
 
-          <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 flex items-center justify-between">
-            <span>Demo Judge Credentials</span>
-            <span className="font-mono text-slate-800">admin@raksha.ai / raksha2026</span>
+          <div className="rounded-xl bg-[#F5F7FB] px-3.5 py-2.5 text-xs text-slate-600 flex items-center justify-between gap-2">
+            <span>Operator Access</span>
+            <span className="font-mono text-[#0F4C9C] font-medium">admin@raksha.ai / raksha2026</span>
           </div>
 
           {pendingIncidents.length > 0 && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
-              {pendingIncidents.length} live SOS alert waiting — sign in to hear siren &amp; accept dispatch.
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-semibold text-red-700">
+              {pendingIncidents.length} priority SOS alert waiting — sign in to review and dispatch.
             </div>
           )}
 
           <button
             type="submit"
             disabled={loggingIn}
-            className="flex w-full min-h-[44px] items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition-colors disabled:opacity-60"
+            className="flex w-full min-h-[46px] items-center justify-center gap-2 rounded-full bg-[#0F4C9C] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0B3D80] transition-colors disabled:opacity-60"
           >
             <Lock className="h-4 w-4" />
             <span>{loggingIn ? 'Verifying...' : 'Sign In to Command Center'}</span>
@@ -280,10 +280,15 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
     );
   }
 
+  const activeDispatchCount = incidents.filter(
+    (i) => i.status === 'ACCEPTED' || i.status === 'EN_ROUTE' || i.status === 'ARRIVED',
+  ).length;
+  const totalAvailableIcuBeds = hospitals.reduce((sum, h) => sum + h.icuBedsAvailable, 0);
+
   return (
     <div className="space-y-4">
       {/* Command Bar Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[22px] border border-slate-200/80 bg-white px-5 py-3.5 shadow-[0_2px_14px_rgba(15,23,42,0.03)]">
         <div className="flex items-center gap-4 min-w-0">
           <div>
             <div className="text-sm font-bold text-slate-900 font-display">
@@ -292,7 +297,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
               <span>Officer Priya Sharma</span>
               <span aria-hidden="true">·</span>
-              <span className={wsConnected ? 'text-emerald-700 font-medium' : 'text-amber-700 font-medium'}>
+              <span className={wsConnected ? 'text-[#0F4C9C] font-medium' : 'text-amber-700 font-medium'}>
                 {wsConnected ? 'WebSocket Connected' : 'Reconnecting...'}
               </span>
               <span aria-hidden="true">·</span>
@@ -302,14 +307,14 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Segmented Workspace Tabs */}
-          <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1">
+          {/* Segmented Pill Workspace Tabs */}
+          <div className="flex items-center gap-1 rounded-full bg-[#F3F6FB] p-1">
             <button
               type="button"
               onClick={() => setActiveTab('dispatch')}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
                 activeTab === 'dispatch'
-                  ? 'bg-white text-slate-900 shadow-sm'
+                  ? 'bg-[#0F4C9C] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -318,9 +323,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('hospitals')}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
                 activeTab === 'hospitals'
-                  ? 'bg-white text-slate-900 shadow-sm'
+                  ? 'bg-[#0F4C9C] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -334,7 +339,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
               emergencyAlarm.unlock();
               setAlarmMuted((m) => !m);
             }}
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
               alarmActive && !alarmMuted
                 ? 'border-red-300 bg-red-50 text-red-700'
                 : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
@@ -347,11 +352,77 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
           <button
             type="button"
             onClick={() => setAuthenticated(false)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap"
+            className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap"
           >
             Sign Out
           </button>
         </div>
+      </div>
+
+      {/* Interactive Operational KPI Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('dispatch');
+            setStatusFilter('REPORTED');
+          }}
+          className={`text-left rounded-[20px] border px-4 py-3.5 transition-all duration-150 shadow-[0_2px_10px_rgba(15,23,42,0.02)] ${
+            activeTab === 'dispatch' && statusFilter === 'REPORTED'
+              ? 'border-red-300 bg-red-50/50'
+              : 'border-slate-200/80 bg-white hover:border-slate-300'
+          }`}
+        >
+          <div className="text-[11px] font-medium text-slate-500">Pending Alerts</div>
+          <div
+            className={`mt-1 text-2xl font-bold font-display tabular-nums ${
+              pendingIncidents.length > 0 ? 'text-red-600' : 'text-slate-900'
+            }`}
+          >
+            {pendingIncidents.length}
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('dispatch');
+            setStatusFilter('ACTIVE');
+          }}
+          className={`text-left rounded-[20px] px-4 py-3.5 transition-all duration-150 ${
+            activeTab === 'dispatch' && statusFilter === 'ACTIVE'
+              ? 'bg-[#0B3F84] text-white shadow-md'
+              : 'bg-gradient-to-br from-[#6EA7F6] to-[#5E99EE] text-white shadow-[0_4px_14px_rgba(94,153,238,0.2)] hover:brightness-[0.98]'
+          }`}
+        >
+          <div className="text-[11px] font-medium text-white/85">Active Units</div>
+          <div className="mt-1 text-2xl font-bold font-display tabular-nums text-white">
+            {activeDispatchCount}
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('hospitals')}
+          className={`text-left rounded-[20px] border px-4 py-3.5 transition-all duration-150 shadow-[0_2px_10px_rgba(15,23,42,0.02)] ${
+            activeTab === 'hospitals'
+              ? 'border-[#0F4C9C] bg-[#F3F7FD]'
+              : 'border-slate-200/80 bg-white hover:border-slate-300'
+          }`}
+        >
+          <div className="text-[11px] font-medium text-slate-500">Partner Hospitals</div>
+          <div className="mt-1 text-2xl font-bold font-display tabular-nums text-slate-900">
+            {hospitals.length}
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('hospitals')}
+          className="text-left rounded-[20px] bg-gradient-to-br from-[#1251A3] to-[#0B3F84] px-4 py-3.5 text-white shadow-[0_4px_14px_rgba(15,76,156,0.2)] hover:brightness-105 transition-all duration-150"
+        >
+          <div className="text-[11px] font-medium text-white/85">Available ICU Beds</div>
+          <div className="mt-1 text-2xl font-bold font-display tabular-nums text-white">
+            {totalAvailableIcuBeds}
+          </div>
+        </button>
       </div>
 
       {/* Prominent Real-Time Incoming SOS Emergency Pop-Up Notification */}
@@ -370,10 +441,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                 <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-red-700">
                   <span className="inline-flex items-center gap-1">
                     <Bell className="h-3.5 w-3.5" />
-                    INCOMING {popupIncident.type === 'DISTRESS_SOS' ? 'SOS DISTRESS' : 'SECURE ALERT'}
+                    {popupIncident.type === 'DISTRESS_SOS' ? 'Priority SOS Alert' : 'Priority Anonymous Alert'}
                   </span>
                   <span aria-hidden="true">·</span>
-                  <span className="font-mono">{popupIncident.id}</span>
+                  <span className="font-mono tabular-nums">{popupIncident.id}</span>
                   <span aria-hidden="true">·</span>
                   <span>{popupIncident.category}</span>
                 </div>
@@ -382,11 +453,11 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                 </h3>
                 <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-700">
                   <span>Reporter: {popupIncident.reporterName}</span>
-                  <span className="font-mono">
+                  <span className="font-mono tabular-nums">
                     {popupIncident.latitude.toFixed(4)}° N, {popupIncident.longitude.toFixed(4)}° E
                   </span>
-                  <span className="font-mono">Accuracy ±{popupIncident.accuracyMeters.toFixed(1)} m</span>
-                  <span className="font-mono">Est. {popupIncident.distanceKm.toFixed(2)} km</span>
+                  <span className="font-mono tabular-nums">Accuracy ±{popupIncident.accuracyMeters.toFixed(1)} m</span>
+                  <span className="font-mono tabular-nums">Est. {popupIncident.distanceKm.toFixed(2)} km</span>
                 </div>
                 {popupIncident.notes && (
                   <p className="mt-1.5 text-xs text-slate-800">Note: {popupIncident.notes}</p>
@@ -426,24 +497,24 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
         </div>
       )}
 
-      {/* TAB 1: Live Emergency Dispatch & Blinkit-style Route View */}
+      {/* TAB 1: Live Emergency Dispatch & Route View */}
       {activeTab === 'dispatch' ? (
         <div className={`grid gap-4 ${isEmbeddedSplit ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-12'}`}>
           {/* Left Column: Live Incident Queue */}
-          <div className={`${isEmbeddedSplit ? '' : 'lg:col-span-5'} rounded-xl border border-slate-200 bg-white overflow-hidden`}>
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-4 py-3">
+          <div className={`${isEmbeddedSplit ? '' : 'lg:col-span-5'} rounded-[24px] border border-slate-200/80 bg-white overflow-hidden shadow-[0_2px_14px_rgba(15,23,42,0.03)]`}>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-5 py-3.5">
               <h3 className="text-sm font-bold text-slate-900 font-display">
                 Live Incident Feed
               </h3>
-              <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-0.5 text-[11px]">
+              <div className="flex items-center gap-1 rounded-full bg-[#F3F6FB] p-1 text-[11px]">
                 {(['ALL', 'REPORTED', 'ACTIVE', 'RESOLVED'] as const).map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setStatusFilter(tab)}
-                    className={`rounded-md px-2 py-1 font-medium transition-colors ${
+                    className={`rounded-full px-2.5 py-1 font-medium transition-colors ${
                       statusFilter === tab
-                        ? 'bg-white text-slate-900 shadow-sm'
+                        ? 'bg-[#0F4C9C] text-white shadow-xs'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -455,12 +526,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
 
             {filteredIncidents.length === 0 ? (
               <div className="p-8 text-center">
-                <MapPin className="mx-auto h-7 w-7 text-slate-300" />
+                <MapPin className="mx-auto h-7 w-7 text-[#0F4C9C]/40" />
                 <div className="mt-2 text-sm font-semibold text-slate-800">
-                  No emergency signals received yet
+                  No active distress alerts
                 </div>
-                <p className="mt-1 text-xs text-slate-500 max-w-xs mx-auto">
-                  Trigger an SOS Distress Signal or Secure Alert from the Citizen Mobile App to see the live WebSocket pop-up, siren, and Blinkit-style navigation map.
+                <p className="mt-1 text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
+                  Incoming citizen SOS broadcasts and mobile APK alerts will appear here immediately with GPS precision and nearest trauma center matching.
                 </p>
               </div>
             ) : (
@@ -476,8 +547,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') setSelectedIncidentId(inc.id);
                       }}
-                      className={`w-full text-left px-4 py-3 cursor-pointer transition-colors ${
-                        isSelected ? 'bg-slate-50' : 'hover:bg-slate-50/70'
+                      className={`w-full text-left px-5 py-3.5 cursor-pointer transition-colors ${
+                        isSelected ? 'bg-[#F3F7FD]' : 'hover:bg-slate-50/70'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
@@ -491,7 +562,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                                   ? 'font-semibold text-red-600'
                                   : inc.status === 'RESOLVED'
                                     ? 'font-medium text-slate-500'
-                                    : 'font-semibold text-emerald-700'
+                                    : 'font-semibold text-[#0F4C9C]'
                               }
                             >
                               {inc.status === 'REPORTED'
@@ -507,7 +578,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                             <span>{inc.reporterName}</span>
                             <span aria-hidden="true">·</span>
-                            <span className="font-mono">
+                            <span className="font-mono tabular-nums">
                               {inc.latitude.toFixed(4)}, {inc.longitude.toFixed(4)}
                             </span>
                           </div>
@@ -520,7 +591,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                               e.stopPropagation();
                               handleAcceptIncident(inc.id);
                             }}
-                            className="shrink-0 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
+                            className="shrink-0 rounded-full bg-emerald-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
                           >
                             Accept
                           </button>
@@ -541,7 +612,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             )}
           </div>
 
-          {/* Right Column: Blinkit-Style Route & Navigation Map */}
+          {/* Right Column: Live Route & Navigation Map */}
           <div className={`${isEmbeddedSplit ? '' : 'lg:col-span-7'}`}>
             {selectedIncident ? (
               <BlinkitRouteMap
@@ -551,13 +622,13 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                 onUpdateStatus={handleUpdateStatus}
               />
             ) : (
-              <div className="flex h-full min-h-[340px] flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-8 text-center">
-                <HospitalIcon className="h-8 w-8 text-slate-300" />
+              <div className="flex h-full min-h-[340px] flex-col items-center justify-center rounded-[24px] border border-slate-200/80 bg-white p-8 text-center shadow-[0_2px_14px_rgba(15,23,42,0.03)]">
+                <HospitalIcon className="h-8 w-8 text-[#0F4C9C]/40" />
                 <div className="mt-3 text-sm font-semibold text-slate-900">
-                  Live Blinkit-Style Dispatch Map Standby
+                  Dispatch Telemetry Map Standby
                 </div>
-                <p className="mt-1 max-w-sm text-xs text-slate-500">
-                  Once a citizen submits SOS and you click Accept, this map displays the real-time ambulance route, ETA countdown, hospital pin, and turn-by-turn directions.
+                <p className="mt-1 max-w-sm text-xs text-slate-500 leading-relaxed">
+                  Accept an incoming SOS alert or select an active incident to initiate live ambulance routing, ETA telemetry, and hospital handover controls.
                 </p>
               </div>
             )}
@@ -566,7 +637,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
       ) : (
         /* TAB 2: Hospital Network & Add Hospital Form */
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-slate-200/80 bg-white px-5 py-3.5 shadow-[0_2px_14px_rgba(15,23,42,0.03)]">
             <div>
               <h3 className="text-sm font-bold text-slate-900 font-display">
                 Registered Emergency Hospitals
@@ -578,7 +649,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             <button
               type="button"
               onClick={() => setShowAddHospitalForm((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#0F4C9C] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0B3D80] transition-colors whitespace-nowrap"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>{showAddHospitalForm ? 'Close Form' : 'Add Hospital'}</span>
@@ -594,7 +665,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
           {showAddHospitalForm && (
             <form
               onSubmit={handleAddHospital}
-              className="rounded-xl border border-slate-200 bg-white p-5 space-y-4"
+              className="rounded-[24px] border border-slate-200/80 bg-white p-6 space-y-4 shadow-[0_2px_14px_rgba(15,23,42,0.03)]"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h4 className="text-sm font-bold text-slate-900 font-display">
@@ -612,7 +683,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                         setHospLat((preset.latitude + 0.008).toFixed(4));
                         setHospLng((preset.longitude - 0.009).toFixed(4));
                       }}
-                      className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-700 hover:bg-slate-100"
+                      className="rounded-full border border-slate-200 bg-[#F5F7FB] px-3 py-1 text-[11px] font-medium text-[#0F4C9C] hover:bg-slate-100"
                     >
                       Near {preset.city}
                     </button>
@@ -629,7 +700,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     value={hospName}
                     onChange={(e) => setHospName(e.target.value)}
                     placeholder="e.g., Apollo Trauma Center"
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -639,7 +710,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     required
                     value={hospCity}
                     onChange={(e) => setHospCity(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -649,7 +720,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     value={hospArea}
                     onChange={(e) => setHospArea(e.target.value)}
                     placeholder="e.g., Sarita Vihar"
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -660,7 +731,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     required
                     value={hospLat}
                     onChange={(e) => setHospLat(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-mono text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs font-mono text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -671,7 +742,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     required
                     value={hospLng}
                     onChange={(e) => setHospLng(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-mono text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs font-mono text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -680,7 +751,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     type="text"
                     value={hospPhone}
                     onChange={(e) => setHospPhone(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-mono text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs font-mono text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -690,7 +761,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     min="1"
                     value={hospBeds}
                     onChange={(e) => setHospBeds(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-mono text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs font-mono text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -700,7 +771,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     min="1"
                     value={hospAmbs}
                     onChange={(e) => setHospAmbs(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-mono text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs font-mono text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -710,7 +781,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     value={hospAddress}
                     onChange={(e) => setHospAddress(e.target.value)}
                     placeholder="Optional full street address"
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:border-slate-900 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-[#F7F9FC] px-3 py-2 text-xs text-slate-900 focus:border-[#0F4C9C] focus:bg-white focus:outline-none"
                   />
                 </div>
               </div>
@@ -719,14 +790,14 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAddHospitalForm(false)}
-                  className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={addingHospital}
-                  className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+                  className="rounded-full bg-[#0F4C9C] px-5 py-2 text-xs font-semibold text-white hover:bg-[#0B3D80] disabled:opacity-60"
                 >
                   {addingHospital ? 'Saving Hospital...' : 'Save & Activate Hospital'}
                 </button>
@@ -735,24 +806,24 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
           )}
 
           {/* Hospitals Table */}
-          <div className="rounded-xl border border-slate-200 bg-white overflow-x-auto">
+          <div className="rounded-[24px] border border-slate-200/80 bg-white overflow-x-auto shadow-[0_2px_14px_rgba(15,23,42,0.03)]">
             <table className="w-full text-left text-xs">
-              <thead className="border-b border-slate-200 bg-slate-50 text-slate-600">
+              <thead className="border-b border-slate-200 bg-[#F5F7FB] text-slate-600">
                 <tr>
-                  <th className="px-4 py-3 font-semibold">Hospital</th>
-                  <th className="px-4 py-3 font-semibold">City &amp; Area</th>
-                  <th className="px-4 py-3 font-semibold">GPS Coordinates</th>
-                  <th className="px-4 py-3 font-semibold text-right">ICU Beds</th>
-                  <th className="px-4 py-3 font-semibold text-right">Ambulances</th>
-                  <th className="px-4 py-3 font-semibold">Hotline</th>
+                  <th className="px-5 py-3.5 font-semibold">Hospital</th>
+                  <th className="px-4 py-3.5 font-semibold">City &amp; Area</th>
+                  <th className="px-4 py-3.5 font-semibold">GPS Coordinates</th>
+                  <th className="px-4 py-3.5 font-semibold text-right">ICU Beds</th>
+                  <th className="px-4 py-3.5 font-semibold text-right">Ambulances</th>
+                  <th className="px-5 py-3.5 font-semibold">Hotline</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {hospitals.map((h) => (
-                  <tr key={h.id} className="hover:bg-slate-50/70">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
+                  <tr key={h.id} className="hover:bg-[#F7F9FC] transition-colors">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-2.5">
+                        <Building2 className="h-4 w-4 text-[#0F4C9C] shrink-0" />
                         <div>
                           <div className="font-semibold text-slate-900">{h.name}</div>
                           <div className="font-mono text-[11px] text-slate-500">
@@ -761,19 +832,19 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-slate-700">
+                    <td className="px-4 py-3.5 text-slate-700">
                       {h.area}, {h.city}
                     </td>
-                    <td className="px-4 py-3 font-mono text-slate-600">
+                    <td className="px-4 py-3.5 font-mono tabular-nums text-slate-600">
                       {h.latitude.toFixed(4)}° N, {h.longitude.toFixed(4)}° E
                     </td>
-                    <td className="px-4 py-3 text-right font-mono font-semibold text-emerald-700">
+                    <td className="px-4 py-3.5 text-right font-mono tabular-nums font-semibold text-emerald-700">
                       {h.icuBedsAvailable}
                     </td>
-                    <td className="px-4 py-3 text-right font-mono font-semibold text-slate-900">
+                    <td className="px-4 py-3.5 text-right font-mono tabular-nums font-semibold text-[#0F4C9C]">
                       {h.ambulancesReady}
                     </td>
-                    <td className="px-4 py-3 font-mono text-slate-600">{h.phone}</td>
+                    <td className="px-5 py-3.5 font-mono tabular-nums text-slate-600">{h.phone}</td>
                   </tr>
                 ))}
               </tbody>

@@ -202,6 +202,12 @@ async function startServer() {
     res.json({ status: 'ok', service: 'raksha-ai-demo', timestamp: new Date().toISOString() });
   });
 
+  app.get('/api/maps-config', (_req, res) => {
+    res.json({
+      apiKey: process.env.VITE_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY || '',
+    });
+  });
+
   app.get('/api/state', (_req, res) => {
     res.json({ hospitals, incidents, suggestions });
   });
