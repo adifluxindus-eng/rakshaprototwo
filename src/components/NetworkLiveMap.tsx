@@ -71,7 +71,6 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
     [map],
   );
 
-  // Pan smoothly when parent selects a hospital from the list
   useEffect(() => {
     if (!map || !focusedHospitalId) return;
     const h = hospitals.find((item) => item.id === focusedHospitalId);
@@ -83,7 +82,6 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
     }
   }, [map, focusedHospitalId, hospitals]);
 
-  // Pan smoothly to newest incoming incident
   useEffect(() => {
     if (!map || incidents.length === 0) return;
     const newest = incidents[0];
@@ -108,9 +106,10 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
   }
 
   return (
-    <div className="relative h-[340px] w-full overflow-hidden rounded-[20px] border border-slate-200/80 bg-slate-100">
+    <div className="relative h-[360px] w-full overflow-hidden rounded-xl border border-white/10 bg-[#080D16]">
       <GoogleMap
         mapId="DEMO_MAP_ID"
+        colorScheme="DARK"
         defaultCenter={REGION_VIEWS.DELHI.center}
         defaultZoom={REGION_VIEWS.DELHI.zoom}
         mapTypeId={mapType}
@@ -119,7 +118,6 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
         internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
         style={{ width: '100%', height: '100%' }}
       >
-        {/* Partner Hospital Advanced Markers */}
         {hospitals.map((h) => {
           const isSelected = selectedHospital?.id === h.id;
           return (
@@ -134,23 +132,26 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
               }}
             >
               <div
-                className={`group flex items-center gap-1.5 rounded-full border-2 px-2.5 py-1 text-[11px] font-bold shadow-md transition-transform duration-150 hover:scale-105 cursor-pointer ${
+                className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-semibold shadow-lg transition-transform duration-150 hover:scale-105 cursor-pointer ${
                   isSelected
-                    ? 'border-white bg-[#0B3F84] text-white scale-105'
-                    : 'border-white bg-[#0F4C9C] text-white'
+                    ? 'border-sky-300 bg-sky-400 text-slate-950 scale-105'
+                    : 'border-sky-400/50 bg-[#0B1220]/95 text-slate-100'
                 }`}
               >
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-extrabold text-[#0F4C9C]">
+                <span
+                  className={`flex h-4 w-4 items-center justify-center rounded text-[10px] font-bold ${
+                    isSelected ? 'bg-slate-950 text-sky-400' : 'bg-sky-400 text-slate-950'
+                  }`}
+                >
                   H
                 </span>
                 <span className="max-w-[110px] truncate">{h.name.split(' ')[0]}</span>
-                <span className="font-mono text-sky-200 tabular-nums">{h.icuBedsAvailable}</span>
+                <span className="font-mono tabular-nums opacity-80">{h.icuBedsAvailable}</span>
               </div>
             </AdvancedMarker>
           );
         })}
 
-        {/* Active Incident Markers + Moving Ambulance Markers */}
         {incidents.map((inc) => {
           const isDispatched = inc.status !== 'REPORTED';
           const hospLat = inc.assignedHospitalLat ?? inc.latitude - 0.015;
@@ -174,8 +175,8 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
                 }}
               >
                 <div className="relative flex items-center justify-center cursor-pointer">
-                  <span className="sos-pulse-ring absolute h-8 w-8 rounded-full bg-red-500/40" />
-                  <div className="relative flex items-center gap-1 rounded-full border-2 border-white bg-red-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-lg">
+                  <span className="sos-pulse-ring absolute h-9 w-9 rounded-lg bg-red-500/45" />
+                  <div className="relative flex items-center gap-1 rounded-md border border-red-300/70 bg-red-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-lg">
                     <ShieldAlert className="h-3 w-3" />
                     <span>SOS</span>
                   </div>
@@ -184,7 +185,7 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
 
               {isDispatched && inc.status !== 'RESOLVED' && (
                 <AdvancedMarker position={ambPos} zIndex={360}>
-                  <div className="flex items-center gap-1 rounded-full border-2 border-white bg-emerald-600 px-2 py-1 text-[10px] font-bold text-white shadow-lg">
+                  <div className="flex items-center gap-1 rounded-md border border-emerald-300/70 bg-emerald-600 px-2 py-1 text-[10px] font-bold text-white shadow-lg">
                     <Truck className="h-3 w-3" />
                     <span className="font-mono">{inc.assignedAmbulanceCode || 'AMB'}</span>
                   </div>
@@ -194,7 +195,6 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
           );
         })}
 
-        {/* Hospital InfoWindow */}
         {selectedHospital && (
           <InfoWindow
             position={{ lat: selectedHospital.latitude, lng: selectedHospital.longitude }}
@@ -202,14 +202,14 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
             onCloseClick={() => setActiveHospitalId(null)}
           >
             <div className="min-w-[210px] p-1 font-sans text-slate-900">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#0F4C9C]">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-sky-900">
                 <Building2 className="h-3.5 w-3.5" />
                 <span>{selectedHospital.name}</span>
               </div>
               <div className="mt-1 text-[11px] text-slate-600">
                 {selectedHospital.area}, {selectedHospital.city}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-[#F5F7FB] p-2 text-[11px]">
+              <div className="mt-2 grid grid-cols-2 gap-2 rounded-md bg-slate-100 p-2 text-[11px]">
                 <div>
                   <div className="text-slate-500">ICU Beds</div>
                   <div className="font-mono font-bold text-emerald-700 tabular-nums">
@@ -218,7 +218,7 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
                 </div>
                 <div>
                   <div className="text-slate-500">Ambulances</div>
-                  <div className="font-mono font-bold text-[#0F4C9C] tabular-nums">
+                  <div className="font-mono font-bold text-sky-800 tabular-nums">
                     {selectedHospital.ambulancesReady}
                   </div>
                 </div>
@@ -226,7 +226,7 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
               <div className="mt-2 flex items-center justify-between gap-2 text-[11px]">
                 <a
                   href={`tel:${selectedHospital.phone.replace(/\s+/g, '')}`}
-                  className="inline-flex items-center gap-1 font-mono text-slate-700 hover:text-[#0F4C9C]"
+                  className="inline-flex items-center gap-1 font-mono text-slate-700 hover:text-sky-800"
                 >
                   <Phone className="h-3 w-3" />
                   <span>{selectedHospital.phone}</span>
@@ -235,7 +235,7 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
                   <button
                     type="button"
                     onClick={onLaunchSos}
-                    className="rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-red-700"
+                    className="rounded-md bg-red-600 px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-red-700"
                   >
                     Send SOS
                   </button>
@@ -245,7 +245,6 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
           </InfoWindow>
         )}
 
-        {/* Incident InfoWindow */}
         {selectedIncident && (
           <InfoWindow
             position={{ lat: selectedIncident.latitude, lng: selectedIncident.longitude }}
@@ -264,7 +263,7 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
                 <button
                   type="button"
                   onClick={onOpenCommand}
-                  className="mt-2 w-full rounded-full bg-[#0F4C9C] px-3 py-1 text-[11px] font-semibold text-white hover:bg-[#0B3D80]"
+                  className="mt-2 w-full rounded-md bg-slate-900 px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-slate-800"
                 >
                   Open in Command Center
                 </button>
@@ -274,9 +273,9 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
         )}
       </GoogleMap>
 
-      {/* Frosted-Glass Floating HUD Controls */}
+      {/* Top HUD Controls */}
       <div className="pointer-events-none absolute top-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/92 p-1 shadow-sm backdrop-blur-md text-[11px]">
+        <div className="pointer-events-auto flex items-center gap-1 rounded-lg border border-white/15 bg-[#0A101C]/90 p-1 shadow-lg backdrop-blur-md text-[11px]">
           {(
             [
               { id: 'DELHI', label: 'New Delhi' },
@@ -288,10 +287,10 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
               key={r.id}
               type="button"
               onClick={() => handleRegionChange(r.id)}
-              className={`rounded-full px-2.5 py-1 font-semibold transition-colors ${
+              className={`rounded-md px-2.5 py-1 font-semibold transition-colors whitespace-nowrap ${
                 regionKey === r.id
-                  ? 'bg-[#0F4C9C] text-white'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-sky-400 text-slate-950'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               {r.label}
@@ -302,22 +301,23 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
         <button
           type="button"
           onClick={() => setMapType((m) => (m === 'roadmap' ? 'hybrid' : 'roadmap'))}
-          className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/92 px-3 py-1.5 text-[11px] font-semibold text-slate-800 shadow-sm backdrop-blur-md hover:bg-white transition-colors"
+          className="pointer-events-auto inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-[#0A101C]/90 px-3 py-1.5 text-[11px] font-semibold text-slate-100 shadow-lg backdrop-blur-md hover:bg-[#121B2D] transition-colors whitespace-nowrap"
         >
-          <Layers className="h-3.5 w-3.5 text-[#0F4C9C]" />
+          <Layers className="h-3.5 w-3.5 text-sky-400" />
           <span>{mapType === 'roadmap' ? 'Satellite' : 'Roadmap'}</span>
         </button>
       </div>
 
-      {/* Bottom Floating Legend Strip */}
-      <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-3 rounded-full border border-slate-200/80 bg-white/92 px-3.5 py-1.5 text-[11px] font-medium text-slate-700 shadow-sm backdrop-blur-md">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#0F4C9C]" />
-          <span>Hospitals ({hospitals.length})</span>
+      {/* Bottom Readout Strip */}
+      <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-3 rounded-lg border border-white/15 bg-[#0A101C]/90 px-3.5 py-1.5 text-[11px] font-medium text-slate-200 shadow-lg backdrop-blur-md">
+        <span className="font-mono tabular-nums text-sky-300">
+          {hospitals.length} Trauma Nodes
         </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-600" />
-          <span>Active SOS ({incidents.length})</span>
+        <span aria-hidden="true" className="text-slate-600">
+          ·
+        </span>
+        <span className="font-mono tabular-nums text-red-400">
+          {incidents.length} Active Incidents
         </span>
       </div>
     </div>
@@ -327,47 +327,48 @@ const LiveGoogleNetworkInner: React.FC<NetworkLiveMapProps> = ({
 const FallbackNetworkPreview: React.FC<
   Pick<NetworkLiveMapProps, 'hospitals' | 'incidents' | 'onLaunchSos' | 'onOpenCommand'>
 > = ({ hospitals, incidents, onLaunchSos, onOpenCommand }) => (
-  <div className="flex h-[340px] flex-col justify-between rounded-[20px] border border-slate-200/80 bg-gradient-to-br from-[#F3F7FD] to-[#E8F0FB] p-5">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2 text-xs font-semibold text-[#0F4C9C]">
-        <Compass className="h-4 w-4" />
-        <span>Regional Trauma Readiness Network</span>
+  <div className="futuristic-grid flex h-[360px] flex-col justify-between rounded-xl border border-white/[0.08] bg-[#080D16] p-5">
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2 text-xs font-semibold text-sky-300">
+        <Compass className="h-4 w-4 text-sky-400" />
+        <span>Regional Trauma Readiness Grid</span>
       </div>
-      <span className="font-mono text-xs text-slate-500">{hospitals.length} Active Nodes</span>
+      <span className="font-mono text-xs text-slate-400 tabular-nums">
+        {hospitals.length} Active Nodes
+      </span>
     </div>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-auto">
+    <div className="my-auto divide-y divide-white/[0.07] rounded-lg border border-white/[0.08] bg-[#0D131F]/90">
       {hospitals.slice(0, 4).map((h) => (
-        <div
-          key={h.id}
-          className="rounded-2xl border border-white/80 bg-white/90 p-3 shadow-xs backdrop-blur-xs"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-bold text-slate-900 truncate">{h.name}</span>
-            <span className="font-mono text-[11px] font-semibold text-emerald-700 tabular-nums">
-              {h.icuBedsAvailable} ICU
-            </span>
+        <div key={h.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
+          <div className="min-w-0">
+            <div className="text-xs font-semibold text-slate-100 truncate">{h.name}</div>
+            <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-400">
+              <MapPin className="h-3 w-3 text-sky-400 shrink-0" />
+              <span className="truncate">
+                {h.area}, {h.city}
+              </span>
+            </div>
           </div>
-          <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500">
-            <MapPin className="h-3 w-3 text-[#0F4C9C]" />
-            <span>
-              {h.area}, {h.city}
-            </span>
+          <div className="shrink-0 text-right font-mono text-[11px] tabular-nums">
+            <span className="font-semibold text-emerald-400">{h.icuBedsAvailable} ICU</span>
+            <span className="mx-1.5 text-slate-600">·</span>
+            <span className="text-sky-300">{h.ambulancesReady} Units</span>
           </div>
         </div>
       ))}
     </div>
 
-    <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-      <span className="text-slate-600">
-        {incidents.length} live incidents synced across terminals
+    <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+      <span className="text-slate-400 font-mono tabular-nums">
+        {incidents.length} live incidents synced
       </span>
       <div className="flex items-center gap-2">
         {onLaunchSos && (
           <button
             type="button"
             onClick={onLaunchSos}
-            className="rounded-full bg-red-600 px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-red-700"
+            className="rounded-lg bg-red-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-red-500 transition-colors whitespace-nowrap"
           >
             Send SOS
           </button>
@@ -376,7 +377,7 @@ const FallbackNetworkPreview: React.FC<
           <button
             type="button"
             onClick={onOpenCommand}
-            className="rounded-full bg-[#0F4C9C] px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-[#0B3D80]"
+            className="rounded-lg bg-sky-400 px-3.5 py-1.5 text-xs font-semibold text-slate-950 hover:bg-sky-300 transition-colors whitespace-nowrap"
           >
             Command Desk
           </button>

@@ -154,7 +154,6 @@ const DispatchRouteLayer: React.FC<RouteControllerProps> = ({
   const destLat = destination.lat;
   const destLng = destination.lng;
 
-  // Recenter cleanly on demand
   useEffect(() => {
     if (!map || recenterSignal === 0) return;
     if (viewportRef.current) {
@@ -172,7 +171,6 @@ const DispatchRouteLayer: React.FC<RouteControllerProps> = ({
 
     let cancelled = false;
 
-    // Cleanup previous polylines before requesting new route
     polylinesRef.current.forEach((p) => p.setMap(null));
     polylinesRef.current = [];
     setHasComputedRoute(false);
@@ -199,8 +197,8 @@ const DispatchRouteLayer: React.FC<RouteControllerProps> = ({
           const newPolylines = primaryRoute.createPolylines() as google.maps.Polyline[];
           newPolylines.forEach((polyline) => {
             polyline.setOptions({
-              strokeColor: isDispatched ? '#16A34A' : '#0F4C9C',
-              strokeOpacity: 0.92,
+              strokeColor: isDispatched ? '#10B981' : '#38BDF8',
+              strokeOpacity: 0.94,
               strokeWeight: 6,
             });
             polyline.setMap(map);
@@ -251,16 +249,14 @@ const DispatchRouteLayer: React.FC<RouteControllerProps> = ({
     };
   }, [routesLib, map, originLat, originLng, destLat, destLng, onPathComputed]);
 
-  // Update stroke color dynamically when dispatch status changes from REPORTED -> EN_ROUTE
   useEffect(() => {
     polylinesRef.current.forEach((p) => {
       p.setOptions({
-        strokeColor: isDispatched ? '#16A34A' : '#0F4C9C',
+        strokeColor: isDispatched ? '#10B981' : '#38BDF8',
       });
     });
   }, [isDispatched]);
 
-  // Render clean direct vector line while computeRoutes loads or if route lines are empty
   if (hasComputedRoute) return null;
 
   return (
@@ -269,8 +265,8 @@ const DispatchRouteLayer: React.FC<RouteControllerProps> = ({
         { lat: originLat, lng: originLng },
         { lat: destLat, lng: destLng },
       ]}
-      strokeColor={isDispatched ? '#16A34A' : '#DC2626'}
-      strokeOpacity={0.75}
+      strokeColor={isDispatched ? '#10B981' : '#EF4444'}
+      strokeOpacity={0.8}
       strokeWeight={4}
       geodesic
     />
@@ -349,9 +345,10 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
   }
 
   return (
-    <div className={`relative w-full bg-slate-100 ${compact ? 'h-[300px]' : 'h-[410px]'}`}>
+    <div className={`relative w-full bg-[#080D16] ${compact ? 'h-[290px]' : 'h-[400px]'}`}>
       <GoogleMap
         mapId="DEMO_MAP_ID"
+        colorScheme="DARK"
         defaultCenter={{ lat: incident.latitude, lng: incident.longitude }}
         defaultZoom={13.5}
         mapTypeId={mapType}
@@ -368,18 +365,16 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
           onPathComputed={handlePathComputed}
         />
 
-        {/* Incident GPS Accuracy Radius */}
         <Circle
           center={{ lat: incident.latitude, lng: incident.longitude }}
           radius={gpsAccuracyRadiusMeters}
-          strokeColor="#DC2626"
-          strokeOpacity={0.45}
+          strokeColor="#EF4444"
+          strokeOpacity={0.55}
           strokeWeight={1.5}
-          fillColor="#DC2626"
-          fillOpacity={0.1}
+          fillColor="#EF4444"
+          fillOpacity={0.12}
         />
 
-        {/* Nearby Partner Hospitals */}
         {nearbyHospitals.map((h) => (
           <AdvancedMarker
             key={h.id}
@@ -387,8 +382,8 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
             zIndex={100}
             onClick={() => setActiveInfo({ type: 'hospital', hospital: h })}
           >
-            <div className="flex items-center gap-1 rounded-full border border-slate-300 bg-white/95 px-2 py-0.5 text-[10px] font-bold text-[#0F4C9C] shadow-sm hover:scale-105 transition-transform cursor-pointer">
-              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#0F4C9C] text-[9px] text-white">
+            <div className="flex items-center gap-1 rounded-md border border-white/20 bg-[#0A101C]/95 px-2 py-0.5 text-[10px] font-semibold text-sky-300 shadow-md hover:scale-105 transition-transform cursor-pointer">
+              <span className="flex h-3.5 w-3.5 items-center justify-center rounded bg-sky-400 text-[9px] font-bold text-slate-950">
                 H
               </span>
               <span className="max-w-[90px] truncate">{h.name.split(' ')[0]}</span>
@@ -396,14 +391,13 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
           </AdvancedMarker>
         ))}
 
-        {/* Assigned Hospital Marker */}
         <AdvancedMarker
           position={{ lat: hospLat, lng: hospLng }}
           zIndex={220}
           onClick={() => setActiveInfo({ type: 'assigned' })}
         >
-          <div className="flex items-center gap-1.5 rounded-full border-2 border-white bg-[#0F4C9C] px-2.5 py-1 text-[11px] font-bold text-white shadow-lg hover:scale-105 transition-transform cursor-pointer">
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-extrabold text-[#0F4C9C]">
+          <div className="flex items-center gap-1.5 rounded-md border border-sky-300/70 bg-sky-400 px-2.5 py-1 text-[11px] font-bold text-slate-950 shadow-lg hover:scale-105 transition-transform cursor-pointer">
+            <span className="flex h-4 w-4 items-center justify-center rounded bg-slate-950 text-[10px] font-extrabold text-sky-400">
               H
             </span>
             <span className="max-w-[140px] truncate">
@@ -412,36 +406,33 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
           </div>
         </AdvancedMarker>
 
-        {/* Victim / SOS Marker */}
         <AdvancedMarker
           position={{ lat: incident.latitude, lng: incident.longitude }}
           zIndex={260}
           onClick={() => setActiveInfo({ type: 'incident' })}
         >
           <div className="relative flex items-center justify-center cursor-pointer">
-            <span className="sos-pulse-ring absolute h-9 w-9 rounded-full bg-red-500/45" />
-            <div className="relative flex items-center gap-1 rounded-full border-2 border-white bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg">
+            <span className="sos-pulse-ring absolute h-9 w-9 rounded-lg bg-red-500/45" />
+            <div className="relative flex items-center gap-1 rounded-md border border-red-300/70 bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg">
               <ShieldAlert className="h-3.5 w-3.5" />
               <span>SOS</span>
             </div>
           </div>
         </AdvancedMarker>
 
-        {/* Moving Ambulance Unit along computed road polyline */}
         {isDispatched && (
           <AdvancedMarker
             position={ambulanceLatLng}
             zIndex={320}
             onClick={() => setActiveInfo({ type: 'ambulance' })}
           >
-            <div className="flex items-center gap-1.5 rounded-full border-2 border-white bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg cursor-pointer">
+            <div className="flex items-center gap-1.5 rounded-md border border-emerald-300/70 bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg cursor-pointer">
               <Truck className="h-3.5 w-3.5" />
               <span className="font-mono">{incident.assignedAmbulanceCode || 'AMB-104'}</span>
             </div>
           </AdvancedMarker>
         )}
 
-        {/* Interactive InfoWindows */}
         {activeInfo?.type === 'incident' && (
           <InfoWindow
             position={{ lat: incident.latitude, lng: incident.longitude }}
@@ -470,7 +461,7 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
             onCloseClick={() => setActiveInfo(null)}
           >
             <div className="min-w-[190px] p-1 font-sans text-slate-900">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#0F4C9C]">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-sky-900">
                 <Building2 className="h-3.5 w-3.5" />
                 <span>{incident.assignedHospitalName || 'Assigned Trauma Center'}</span>
               </div>
@@ -504,7 +495,7 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
               {incident.driverPhone && (
                 <a
                   href={`tel:${incident.driverPhone.replace(/\s+/g, '')}`}
-                  className="mt-1.5 inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-[#0F4C9C]"
+                  className="mt-1.5 inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-sky-800"
                 >
                   <Phone className="h-3 w-3" />
                   <span>{incident.driverPhone}</span>
@@ -521,7 +512,7 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
             onCloseClick={() => setActiveInfo(null)}
           >
             <div className="min-w-[185px] p-1 font-sans text-slate-900">
-              <div className="text-xs font-bold text-[#0F4C9C]">{activeInfo.hospital.name}</div>
+              <div className="text-xs font-bold text-sky-900">{activeInfo.hospital.name}</div>
               <div className="mt-0.5 text-[11px] text-slate-600">
                 {activeInfo.hospital.area}, {activeInfo.hospital.city}
               </div>
@@ -529,7 +520,7 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
                 <span className="font-mono font-bold text-emerald-700">
                   {activeInfo.hospital.icuBedsAvailable} ICU
                 </span>
-                <span className="font-mono font-bold text-[#0F4C9C]">
+                <span className="font-mono font-bold text-sky-800">
                   {activeInfo.hospital.ambulancesReady} Units
                 </span>
               </div>
@@ -538,9 +529,9 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
         )}
       </GoogleMap>
 
-      {/* Frosted-Glass Top-Right Map HUD Controls */}
+      {/* Dark Map HUD Controls */}
       <div className="pointer-events-none absolute top-3 right-3 flex flex-wrap items-center gap-2">
-        <div className="pointer-events-auto flex items-center gap-0.5 rounded-full border border-slate-200/80 bg-white/92 p-1 text-[11px] shadow-sm backdrop-blur-md">
+        <div className="pointer-events-auto flex items-center gap-0.5 rounded-lg border border-white/15 bg-[#0A101C]/90 p-1 text-[11px] shadow-lg backdrop-blur-md">
           {(
             [
               { id: 'roadmap', label: 'Map' },
@@ -552,10 +543,10 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
               key={mode.id}
               type="button"
               onClick={() => setMapType(mode.id)}
-              className={`rounded-full px-2.5 py-1 font-semibold transition-colors ${
+              className={`rounded-md px-2.5 py-1 font-semibold transition-colors ${
                 mapType === mode.id
-                  ? 'bg-[#0F4C9C] text-white'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-sky-400 text-slate-950'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               {mode.label}
@@ -567,27 +558,27 @@ const LiveGoogleDispatchMap: React.FC<LiveGoogleDispatchMapProps> = ({
           type="button"
           onClick={() => setRecenterSignal((n) => n + 1)}
           title="Fit route in viewport"
-          className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/92 px-3 py-1.5 text-[11px] font-semibold text-slate-800 shadow-sm backdrop-blur-md hover:bg-white transition-colors"
+          className="pointer-events-auto inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-[#0A101C]/90 px-3 py-1.5 text-[11px] font-semibold text-slate-100 shadow-lg backdrop-blur-md hover:bg-[#121B2D] transition-colors"
         >
-          <LocateFixed className="h-3.5 w-3.5 text-[#0F4C9C]" />
+          <LocateFixed className="h-3.5 w-3.5 text-sky-400" />
           <span>Recenter</span>
         </button>
       </div>
 
-      {/* Floating Map Legend Bottom-Left */}
-      <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-3 rounded-full border border-slate-200/80 bg-white/92 px-3.5 py-1.5 text-[11px] font-medium text-slate-700 shadow-sm backdrop-blur-md">
+      {/* Bottom Floating Legend */}
+      <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-3 rounded-lg border border-white/15 bg-[#0A101C]/90 px-3.5 py-1.5 text-[11px] font-medium text-slate-200 shadow-lg backdrop-blur-md">
         <span className="inline-flex items-center gap-1.5">
-          <Crosshair className="h-3.5 w-3.5 text-red-600" />
+          <Crosshair className="h-3.5 w-3.5 text-red-400" />
           <span>SOS Scene</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <HospitalIcon className="h-3.5 w-3.5 text-[#0F4C9C]" />
+          <HospitalIcon className="h-3.5 w-3.5 text-sky-400" />
           <span>Assigned Hospital</span>
         </span>
         {isDispatched && (
           <span className="inline-flex items-center gap-1.5">
-            <Truck className="h-3.5 w-3.5 text-emerald-600" />
-            <span>Live Unit ({Math.round(progress * 100)}%)</span>
+            <Truck className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="font-mono tabular-nums">Live Unit ({Math.round(progress * 100)}%)</span>
           </span>
         )}
       </div>
@@ -606,12 +597,11 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
   const [routeMetrics, setRouteMetrics] = useState<RouteMetrics | null>(null);
 
   const width = 720;
-  const height = compact ? 310 : 420;
+  const height = compact ? 300 : 400;
 
   const hospLat = incident.assignedHospitalLat ?? incident.latitude - 0.018;
   const hospLng = incident.assignedHospitalLng ?? incident.longitude - 0.022;
 
-  // Map lat/lng to SVG viewport coordinates for offline/fallback grid
   const projection = useMemo(() => {
     const lats = [incident.latitude, hospLat];
     const lngs = [incident.longitude, hospLng];
@@ -685,7 +675,7 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
 
   const currentInstruction = useMemo(() => {
     if (incident.status === 'REPORTED') {
-      return 'Awaiting admin acceptance to lock road corridor';
+      return 'Awaiting command acceptance to lock road corridor';
     }
     if (incident.status === 'ARRIVED') {
       return `Arrived at ${incident.locationLabel}`;
@@ -711,26 +701,28 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
   const isDispatched = incident.status !== 'REPORTED';
 
   const fallbackSvgMap = (
-    <div className="relative bg-slate-100">
+    <div className="relative bg-[#070B12]">
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="w-full h-auto block select-none"
         role="img"
         aria-label={`Live dispatch route map for ${incident.id}`}
       >
-        <rect width={width} height={height} fill="#EEF2F6" />
+        <rect width={width} height={height} fill="#070B12" />
 
-        <rect x="42" y="34" width="110" height="72" rx="10" fill="#DCFCE7" />
-        <rect x="520" y={height - 108} width="142" height="76" rx="12" fill="#DCFCE7" />
-        <rect x="280" y="24" width="138" height="58" rx="8" fill="#E2E8F0" />
+        {/* Subtle Dark Sectors */}
+        <rect x="42" y="34" width="110" height="72" rx="6" fill="#0C1921" stroke="#162836" strokeWidth="1" />
+        <rect x="520" y={height - 108} width="142" height="76" rx="6" fill="#0C1921" stroke="#162836" strokeWidth="1" />
+        <rect x="280" y="24" width="138" height="58" rx="6" fill="#0D1422" stroke="#1B2840" strokeWidth="1" />
         <path
           d={`M 0 ${height * 0.85} Q ${width * 0.45} ${height * 0.78} ${width} ${height * 0.9}`}
           fill="none"
-          stroke="#BAE6FD"
-          strokeWidth="14"
-          opacity="0.65"
+          stroke="#0F2A44"
+          strokeWidth="12"
+          opacity="0.7"
         />
 
+        {/* Minor Road Grid */}
         {[0.18, 0.36, 0.58, 0.78].map((row, idx) => (
           <line
             key={`h-${idx}`}
@@ -738,8 +730,8 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
             y1={height * row}
             x2={width}
             y2={height * row}
-            stroke="#FFFFFF"
-            strokeWidth="6"
+            stroke="#111A2B"
+            strokeWidth="5"
           />
         ))}
         {[0.16, 0.32, 0.52, 0.76, 0.9].map((col, idx) => (
@@ -749,34 +741,36 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
             y1="0"
             x2={width * col}
             y2={height}
-            stroke="#FFFFFF"
-            strokeWidth="6"
+            stroke="#111A2B"
+            strokeWidth="5"
           />
         ))}
 
-        <line x1="0" y1={height * 0.5} x2={width} y2={height * 0.42} stroke="#CBD5E1" strokeWidth="10" />
-        <line x1="0" y1={height * 0.5} x2={width} y2={height * 0.42} stroke="#FFFFFF" strokeWidth="7" />
-        <line x1={width * 0.44} y1="0" x2={width * 0.48} y2={height} stroke="#CBD5E1" strokeWidth="10" />
-        <line x1={width * 0.44} y1="0" x2={width * 0.48} y2={height} stroke="#FFFFFF" strokeWidth="7" />
+        {/* Primary Arterial Roads */}
+        <line x1="0" y1={height * 0.5} x2={width} y2={height * 0.42} stroke="#1D2B42" strokeWidth="9" />
+        <line x1="0" y1={height * 0.5} x2={width} y2={height * 0.42} stroke="#263854" strokeWidth="2" />
+        <line x1={width * 0.44} y1="0" x2={width * 0.48} y2={height} stroke="#1D2B42" strokeWidth="9" />
+        <line x1={width * 0.44} y1="0" x2={width * 0.48} y2={height} stroke="#263854" strokeWidth="2" />
 
-        <circle cx={width * 0.46} cy={height * 0.46} r="18" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="3" />
-        <circle cx={width * 0.46} cy={height * 0.46} r="8" fill="#BBF7D0" />
+        <circle cx={width * 0.46} cy={height * 0.46} r="18" fill="#0D1524" stroke="#283B58" strokeWidth="2" />
+        <circle cx={width * 0.46} cy={height * 0.46} r="7" fill="#10B981" fillOpacity="0.35" />
 
+        {/* Nearby Hospitals */}
         {projection.nearbyHospitals.map((h) => {
           const pt = projection.toPoint(h.latitude, h.longitude);
           const isAssigned = h.id === incident.assignedHospitalId;
           if (isAssigned) return null;
           return (
             <g key={h.id} transform={`translate(${pt.x}, ${pt.y})`}>
-              <circle r="11" fill="#FFFFFF" stroke="#94A3B8" strokeWidth="1.5" />
-              <path d="M-4 0 H4 M0 -4 V4" stroke="#0F172A" strokeWidth="2" strokeLinecap="round" />
+              <circle r="10" fill="#0D1524" stroke="#38BDF8" strokeOpacity="0.6" strokeWidth="1.5" />
+              <path d="M-3.5 0 H3.5 M0 -3.5 V3.5" stroke="#38BDF8" strokeWidth="1.8" strokeLinecap="round" />
               <text
                 x="0"
                 y="21"
                 textAnchor="middle"
                 fontSize="9.5"
                 fontWeight="600"
-                fill="#475569"
+                fill="#94A3B8"
                 fontFamily="DM Sans, sans-serif"
               >
                 {h.name.slice(0, 22)}
@@ -785,39 +779,40 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
           );
         })}
 
+        {/* Route Path */}
         <polyline
           points={polylineStr}
           fill="none"
-          stroke="#0F172A"
-          strokeOpacity="0.16"
-          strokeWidth="10"
+          stroke={isDispatched ? '#10B981' : '#EF4444'}
+          strokeOpacity="0.22"
+          strokeWidth="12"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <polyline
           points={polylineStr}
           fill="none"
-          stroke={isDispatched ? '#16A34A' : '#DC2626'}
-          strokeWidth="5"
+          stroke={isDispatched ? '#10B981' : '#EF4444'}
+          strokeWidth="4.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray={isDispatched ? '10 8' : '6 8'}
           className={isDispatched && incident.status !== 'ARRIVED' ? 'animate-route-dash' : ''}
         />
 
+        {/* Assigned Hospital Node */}
         <g transform={`translate(${projection.hospitalPt.x}, ${projection.hospitalPt.y})`}>
-          <circle r="18" fill="#0F172A" />
-          <circle r="15" fill="#FFFFFF" />
-          <path d="M-6 0 H6 M0 -6 V6" stroke="#16A34A" strokeWidth="3.2" strokeLinecap="round" />
-          <g transform="translate(0, -28)">
-            <rect x="-86" y="-13" width="172" height="22" rx="6" fill="#0F172A" />
+          <circle r="16" fill="#0A101C" stroke="#38BDF8" strokeWidth="2" />
+          <path d="M-5.5 0 H5.5 M0 -5.5 V5.5" stroke="#38BDF8" strokeWidth="2.8" strokeLinecap="round" />
+          <g transform="translate(0, -27)">
+            <rect x="-86" y="-12" width="172" height="22" rx="5" fill="#0B1322" stroke="#38BDF8" strokeOpacity="0.45" strokeWidth="1" />
             <text
               x="0"
-              y="2"
+              y="3"
               textAnchor="middle"
-              fontSize="10.5"
+              fontSize="10"
               fontWeight="600"
-              fill="#FFFFFF"
+              fill="#E2E8F0"
               fontFamily="Plus Jakarta Sans, sans-serif"
             >
               {(incident.assignedHospitalName || 'Assigned Hospital').slice(0, 26)}
@@ -825,25 +820,26 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
           </g>
         </g>
 
+        {/* Victim / SOS Scene */}
         <g transform={`translate(${projection.victimPt.x}, ${projection.victimPt.y})`}>
           <circle
             r="34"
-            fill="#DC2626"
+            fill="#EF4444"
             fillOpacity="0.12"
-            stroke="#DC2626"
-            strokeOpacity="0.35"
+            stroke="#EF4444"
+            strokeOpacity="0.4"
             strokeWidth="1"
             strokeDasharray="3 3"
           />
-          <circle r="16" fill="#DC2626" fillOpacity="0.2" />
-          <circle r="10" fill="#DC2626" stroke="#FFFFFF" strokeWidth="2.5" />
+          <circle r="16" fill="#EF4444" fillOpacity="0.24" />
+          <circle r="9" fill="#EF4444" stroke="#F8FAFC" strokeWidth="2" />
           <g transform="translate(0, 26)">
-            <rect x="-78" y="-9" width="156" height="21" rx="6" fill="#DC2626" />
+            <rect x="-80" y="-9" width="160" height="21" rx="5" fill="#DC2626" />
             <text
               x="0"
               y="5"
               textAnchor="middle"
-              fontSize="10.5"
+              fontSize="10"
               fontWeight="700"
               fill="#FFFFFF"
               fontFamily="Plus Jakarta Sans, sans-serif"
@@ -853,20 +849,21 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
           </g>
         </g>
 
+        {/* Live Moving Ambulance */}
         {isDispatched && (
           <g transform={`translate(${ambulancePos.x}, ${ambulancePos.y})`}>
-            <circle r="20" fill="#16A34A" fillOpacity="0.18" />
-            <rect x="-15" y="-11" width="30" height="22" rx="6" fill="#16A34A" stroke="#FFFFFF" strokeWidth="2.5" />
-            <path d="M-5 0 H5 M0 -5 V5" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" />
+            <circle r="20" fill="#10B981" fillOpacity="0.2" />
+            <rect x="-15" y="-11" width="30" height="22" rx="5" fill="#10B981" stroke="#F8FAFC" strokeWidth="2" />
+            <path d="M-5 0 H5 M0 -5 V5" stroke="#06281E" strokeWidth="2.4" strokeLinecap="round" />
             <g transform="translate(0, -22)">
-              <rect x="-42" y="-10" width="84" height="17" rx="4" fill="#0F172A" />
+              <rect x="-42" y="-10" width="84" height="17" rx="4" fill="#0B1322" stroke="#10B981" strokeOpacity="0.5" strokeWidth="1" />
               <text
                 x="0"
                 y="2"
                 textAnchor="middle"
                 fontSize="9.5"
                 fontWeight="600"
-                fill="#4ADE80"
+                fill="#6EE7B7"
                 fontFamily="JetBrains Mono, monospace"
               >
                 {incident.assignedAmbulanceCode || 'AMB-104'}
@@ -876,19 +873,19 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
         )}
       </svg>
 
-      <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white/95 px-3 py-1.5 text-[11px] font-medium text-slate-700 shadow-sm backdrop-blur-sm">
+      <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-3 rounded-lg border border-white/15 bg-[#0A101C]/90 px-3 py-1.5 text-[11px] font-medium text-slate-200 shadow-lg backdrop-blur-md">
         <span className="inline-flex items-center gap-1.5">
-          <Crosshair className="h-3.5 w-3.5 text-red-600" />
-          Incident Location
+          <Crosshair className="h-3.5 w-3.5 text-red-400" />
+          <span>Incident Location</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <HospitalIcon className="h-3.5 w-3.5 text-emerald-700" />
-          Assigned Hospital
+          <HospitalIcon className="h-3.5 w-3.5 text-sky-400" />
+          <span>Assigned Hospital</span>
         </span>
         {isDispatched && (
           <span className="inline-flex items-center gap-1.5">
-            <Truck className="h-3.5 w-3.5 text-emerald-600" />
-            Live Ambulance ({Math.round(progress * 100)}%)
+            <Truck className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="font-mono tabular-nums">Live Unit ({Math.round(progress * 100)}%)</span>
           </span>
         )}
       </div>
@@ -896,51 +893,49 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
   );
 
   return (
-    <div className="rounded-[24px] border border-slate-200/80 bg-white overflow-hidden shadow-[0_2px_14px_rgba(15,23,42,0.03)]">
-      {/* Live ETA Header Strip */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-[#1251A3] to-[#0B3F84] px-5 py-3.5 text-white">
+    <div className="rounded-xl border border-white/[0.08] bg-[#0D131F] overflow-hidden">
+      {/* Telemetry Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] bg-[#0A101B] px-5 py-3.5">
         <div className="flex items-center gap-3 min-w-0">
           <div
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
               incident.status === 'ARRIVED' || incident.status === 'RESOLVED'
-                ? 'bg-emerald-600'
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                 : isDispatched
-                  ? 'bg-emerald-500'
-                  : 'bg-red-600'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
             }`}
           >
-            {isDispatched ? <Truck className="h-5 w-5 text-white" /> : <ShieldAlert className="h-5 w-5 text-white" />}
+            {isDispatched ? <Truck className="h-5 w-5" /> : <ShieldAlert className="h-5 w-5" />}
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-              <span className="truncate">
-                {incident.status === 'REPORTED'
-                  ? 'Awaiting Dispatch Acceptance'
-                  : incident.status === 'ARRIVED'
-                    ? 'Ambulance Arrived at Scene'
-                    : incident.status === 'RESOLVED'
-                      ? 'Incident Resolved'
-                      : `Ambulance arriving in ${incident.etaMinutes} min`}
-              </span>
+            <div className="text-sm font-semibold tracking-tight text-white truncate">
+              {incident.status === 'REPORTED'
+                ? 'Awaiting Dispatch Acceptance'
+                : incident.status === 'ARRIVED'
+                  ? 'Ambulance Arrived at Scene'
+                  : incident.status === 'RESOLVED'
+                    ? 'Incident Resolved'
+                    : `Ambulance arriving in ${incident.etaMinutes} min`}
             </div>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-200 mt-0.5">
-              <span className="font-mono">{incident.id}</span>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mt-0.5 font-mono tabular-nums">
+              <span className="text-slate-200">{incident.id}</span>
               <span aria-hidden="true">·</span>
-              <span className="font-mono">{displayDistanceKm.toFixed(2)} km road route</span>
+              <span>{displayDistanceKm.toFixed(2)} km road route</span>
               {incident.assignedAmbulanceCode && (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span className="font-mono text-emerald-300">{incident.assignedAmbulanceCode}</span>
+                  <span className="text-emerald-400">{incident.assignedAmbulanceCode}</span>
                 </>
               )}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           {hasProvider && !quotaExceeded && (
-            <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-medium text-white">
-              <Layers className="h-3 w-3" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-medium text-sky-300">
+              <Layers className="h-3.5 w-3.5" />
               <span>Live Maps</span>
             </span>
           )}
@@ -948,27 +943,27 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3.5 py-2 text-xs font-medium text-white hover:bg-white/25 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-[#121B2D] px-3.5 py-2 text-xs font-semibold text-slate-100 hover:bg-[#19253D] transition-colors whitespace-nowrap"
           >
-            <Navigation className="h-3.5 w-3.5" />
+            <Navigation className="h-3.5 w-3.5 text-sky-400" />
             <span>Open Directions</span>
-            <ExternalLink className="h-3 w-3 opacity-75" />
+            <ExternalLink className="h-3 w-3 opacity-70" />
           </a>
         </div>
       </div>
 
-      {/* Turn-by-turn instruction bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-950">
+      {/* Turn-by-turn Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] bg-emerald-500/10 px-4 py-2 text-xs text-emerald-200">
         <div className="flex items-center gap-2 font-medium">
-          <Navigation className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
+          <Navigation className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
           <span>{currentInstruction}</span>
         </div>
-        <div className="font-mono text-[11px] text-emerald-800">
+        <div className="font-mono text-[11px] text-emerald-300/90 tabular-nums">
           {incident.latitude.toFixed(4)}° N, {incident.longitude.toFixed(4)}° E (±{incident.accuracyMeters.toFixed(1)}m)
         </div>
       </div>
 
-      {/* Real Interactive Google Map or Stylized Fallback */}
+      {/* Map Viewport */}
       {hasProvider && !quotaExceeded ? (
         <LiveGoogleDispatchMap
           incident={incident}
@@ -985,30 +980,32 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
         fallbackSvgMap
       )}
 
-      {/* Bottom Responder / Dispatch Progress & Action Bar */}
-      <div className="border-t border-slate-200 bg-white p-4">
+      {/* Progress & Controls */}
+      <div className="border-t border-white/[0.08] bg-[#0D131F] p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-6">
             <div>
-              <div className="text-xs text-slate-500">Assigned Hospital</div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-[11px] text-slate-400">Assigned Hospital</div>
+              <div className="text-sm font-semibold text-white">
                 {incident.assignedHospitalName || 'Pending Hospital Match'}
               </div>
             </div>
             {incident.driverName && (
               <div>
-                <div className="text-xs text-slate-500">Ambulance Paramedic</div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                <div className="text-[11px] text-slate-400">Ambulance Paramedic</div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-white">
                   <span>{incident.driverName}</span>
-                  <span className="text-xs font-normal font-mono text-slate-500">{incident.driverPhone}</span>
+                  <span className="text-xs font-normal font-mono text-slate-400 tabular-nums">
+                    {incident.driverPhone}
+                  </span>
                 </div>
               </div>
             )}
             <div>
-              <div className="text-xs text-slate-500">Dispatch Progress</div>
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <Clock className="h-3.5 w-3.5 text-slate-500" />
-                <span className="font-mono">
+              <div className="text-[11px] text-slate-400">Dispatch Progress</div>
+              <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                <Clock className="h-3.5 w-3.5 text-sky-400" />
+                <span className="font-mono tabular-nums">
                   {incident.status === 'REPORTED'
                     ? 'Waiting for Acceptance'
                     : incident.status === 'ARRIVED'
@@ -1027,7 +1024,7 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
                 <button
                   type="button"
                   onClick={() => onUpdateStatus(incident.id, 'ARRIVED')}
-                  className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50 transition-colors whitespace-nowrap"
+                  className="rounded-lg border border-white/15 bg-[#121B2D] px-3.5 py-2 text-xs font-semibold text-slate-100 hover:bg-[#19253D] transition-colors whitespace-nowrap"
                 >
                   Mark Arrived
                 </button>
@@ -1035,7 +1032,7 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
               <button
                 type="button"
                 onClick={() => onUpdateStatus(incident.id, 'RESOLVED')}
-                className="rounded-full bg-[#0F4C9C] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0B3D80] transition-colors whitespace-nowrap"
+                className="rounded-lg bg-sky-400 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-sky-300 transition-colors whitespace-nowrap"
               >
                 Complete Handover
               </button>
@@ -1045,49 +1042,47 @@ export const BlinkitRouteMap: React.FC<BlinkitRouteMapProps> = ({
           {!isAdminView && incident.driverPhone && (
             <a
               href={`tel:${incident.driverPhone.replace(/\s+/g, '')}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-[#121B2D] px-3.5 py-2 text-xs font-semibold text-slate-100 hover:bg-[#19253D] transition-colors whitespace-nowrap"
             >
-              <Phone className="h-3.5 w-3.5 text-emerald-600" />
+              <Phone className="h-3.5 w-3.5 text-emerald-400" />
               <span>Call Paramedic</span>
             </a>
           )}
         </div>
 
-        {/* Clean linear progress track */}
-        <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+        {/* Linear Progress Track */}
+        <div className="mt-3.5 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.08]">
           <div
             className={`h-full transition-all duration-500 ${
-              incident.status === 'REPORTED' ? 'bg-red-500 w-[8%]' : 'bg-emerald-600'
+              incident.status === 'REPORTED' ? 'bg-red-500' : 'bg-emerald-500'
             }`}
             style={{ width: incident.status === 'REPORTED' ? '8%' : `${Math.max(10, Math.round(progress * 100))}%` }}
           />
         </div>
-        <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-slate-500">
-          <span className={incident.status !== 'REPORTED' ? 'text-emerald-700 font-semibold' : 'text-red-600 font-semibold'}>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] font-medium text-slate-500">
+          <span className={incident.status !== 'REPORTED' ? 'text-emerald-400 font-semibold' : 'text-red-400 font-semibold'}>
             SOS Received
           </span>
-          <span className={isDispatched ? 'text-emerald-700 font-semibold' : ''}>
+          <span className={isDispatched ? 'text-emerald-400 font-semibold' : ''}>
             Admin Accepted &amp; Dispatched
           </span>
-          <span className={incident.status === 'ARRIVED' || incident.status === 'RESOLVED' ? 'text-emerald-700 font-semibold' : ''}>
+          <span className={incident.status === 'ARRIVED' || incident.status === 'RESOLVED' ? 'text-emerald-400 font-semibold' : ''}>
             Ambulance Arrived
           </span>
-          <span className={incident.status === 'RESOLVED' ? 'text-emerald-700 font-semibold' : ''}>
+          <span className={incident.status === 'RESOLVED' ? 'text-emerald-400 font-semibold' : ''}>
             Hospital Handover
           </span>
         </div>
       </div>
 
-      {/* Coordinates Verification Footer */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 bg-slate-50 px-4 py-2 text-xs text-slate-600">
+      {/* Footer Verification */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] bg-[#0A101B] px-4 py-2 text-xs text-slate-400">
         <span className="inline-flex items-center gap-1.5">
-          <MapPin className="h-3.5 w-3.5 text-red-600" />
-          <span>{incident.locationLabel}</span>
-          {incident.isDemoLocation && (
-            <span className="text-slate-400">· Preset Coordinate</span>
-          )}
+          <MapPin className="h-3.5 w-3.5 text-red-400" />
+          <span className="text-slate-200">{incident.locationLabel}</span>
+          {incident.isDemoLocation && <span className="text-slate-500">· Preset Coordinate</span>}
         </span>
-        <span className="font-mono text-[11px] text-slate-500">
+        <span className="font-mono text-[11px] text-slate-400">
           Reporter: {incident.reporterName} · {incident.category}
         </span>
       </div>

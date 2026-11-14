@@ -166,20 +166,20 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
     <div
       className={
         isEmbeddedSplit
-          ? 'mx-auto w-full max-w-[420px] rounded-[28px] border-[6px] border-[#0F4C9C] bg-white shadow-xl overflow-hidden'
-          : 'mx-auto w-full max-w-md rounded-[24px] border border-slate-200/80 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.05)] overflow-hidden'
+          ? 'mx-auto w-full max-w-[420px] rounded-[26px] border-2 border-white/20 bg-[#0D131F] shadow-2xl overflow-hidden'
+          : 'mx-auto w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#0D131F] shadow-2xl overflow-hidden'
       }
     >
-      {/* Mobile Top App Bar */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-[#1251A3] to-[#0B3F84] px-4 py-3.5 text-white">
+      {/* Mobile Terminal Top Bar */}
+      <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#0A101B] px-4 py-3.5 text-white">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-600 shadow-xs">
-            <ShieldCheck className="h-4 w-4 text-white" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-white">
+            <ShieldCheck className="h-4 w-4" />
           </div>
           <div>
             <div className="text-sm font-bold leading-tight font-display">Raksha Mobile</div>
-            <div className="text-[11px] text-sky-100/90">
-              {loggedIn ? (mode === 'SECURE_ALERT' ? 'Anonymous Mode' : citizenName) : 'Citizen SOS App'}
+            <div className="text-[11px] text-slate-400">
+              {loggedIn ? (mode === 'SECURE_ALERT' ? 'Anonymous Mode' : citizenName) : 'Citizen SOS Terminal'}
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
               setLoggedIn(false);
               setActiveIncidentId(null);
             }}
-            className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/25 transition-colors"
+            className="rounded-lg border border-white/15 bg-[#121A2B] px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-[#192338] transition-colors whitespace-nowrap"
           >
             Switch User
           </button>
@@ -201,18 +201,18 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
       {!loggedIn ? (
         <div className="p-5 space-y-5">
           <div>
-            <div className="text-xs font-medium text-red-700">Emergency Citizen Access</div>
-            <h2 className="mt-1 text-xl font-bold text-slate-900 font-display">
+            <div className="text-xs font-semibold text-red-400">Emergency Citizen Access</div>
+            <h2 className="mt-1 text-xl font-bold text-white font-display">
               Direct Distress Sign-In
             </h2>
-            <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
+            <p className="mt-1.5 text-sm text-slate-400 leading-relaxed">
               Proceed immediately without account credentials to broadcast your GPS location to the nearest emergency command desk.
             </p>
           </div>
 
-          <div className="space-y-3 rounded-2xl bg-[#F5F7FB] p-4">
+          <div className="space-y-3 rounded-xl bg-[#080D16] p-4 border border-white/[0.06]">
             <div>
-              <label htmlFor="citizen-name" className="block text-xs font-medium text-slate-700">
+              <label htmlFor="citizen-name" className="block text-xs font-medium text-slate-300">
                 Full Name (Optional)
               </label>
               <input
@@ -221,11 +221,11 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
                 value={citizenName}
                 onChange={(e) => setCitizenName(e.target.value)}
                 placeholder="Enter name for responder identification"
-                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-[#0F4C9C] focus:outline-none"
+                className="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0D131F] px-3 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-sky-400 focus:outline-none"
               />
             </div>
             <div>
-              <label htmlFor="citizen-phone" className="block text-xs font-medium text-slate-700">
+              <label htmlFor="citizen-phone" className="block text-xs font-medium text-slate-300">
                 Callback Number (Optional)
               </label>
               <input
@@ -234,7 +234,7 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
                 value={citizenPhone}
                 onChange={(e) => setCitizenPhone(e.target.value)}
                 placeholder="+91 98XXX XXXXX"
-                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 font-mono tabular-nums focus:border-[#0F4C9C] focus:outline-none"
+                className="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0D131F] px-3 py-2.5 text-sm text-white font-mono tabular-nums placeholder:text-slate-500 focus:border-sky-400 focus:outline-none"
               />
             </div>
           </div>
@@ -246,7 +246,7 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
                 setMode('SOS');
                 setLoggedIn(true);
               }}
-              className="flex w-full min-h-[48px] items-center justify-center gap-2 rounded-full bg-[#0F4C9C] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0B3D80] active:scale-[0.99] transition-all duration-150"
+              className="flex w-full min-h-[48px] items-center justify-center gap-2 rounded-lg bg-sky-400 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-sky-300 active:scale-[0.99] transition-all duration-150"
             >
               <UserCheck className="h-4 w-4" />
               <span>Continue to Citizen Portal</span>
@@ -258,76 +258,73 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
                 setMode('SECURE_ALERT');
                 setLoggedIn(true);
               }}
-              className="flex w-full min-h-[44px] items-center justify-center gap-2 rounded-full border border-slate-200 bg-[#F5F7FB] px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-100 transition-colors duration-150"
+              className="flex w-full min-h-[44px] items-center justify-center gap-2 rounded-lg border border-white/15 bg-[#121A2B] px-4 py-2.5 text-sm font-semibold text-slate-100 hover:bg-[#192338] transition-colors duration-150"
             >
-              <EyeOff className="h-4 w-4 text-slate-600" />
+              <EyeOff className="h-4 w-4 text-slate-400" />
               <span>Submit Anonymous Alert</span>
             </button>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 text-xs text-slate-500 flex items-center justify-between gap-2">
+          <div className="border-t border-white/[0.08] pt-3.5 text-xs text-slate-400 flex items-center justify-between gap-2">
             <span>Native Android Client</span>
             <a
               href="/raksha-sos.apk"
               download="raksha-sos.apk"
-              className="font-semibold text-[#0F4C9C] hover:underline underline-offset-2"
+              className="font-semibold text-sky-400 hover:text-sky-300 transition-colors"
             >
               Download raksha-sos.apk
             </a>
           </div>
         </div>
       ) : activeIncident ? (
-        /* Screen 3: Live Incident Tracking (Updates automatically when Admin accepts!) */
+        /* Screen 3: Live Incident Tracking */
         <div className="p-4 space-y-4">
           <div
             className={`rounded-xl border p-3.5 ${
               activeIncident.status === 'REPORTED'
-                ? 'border-red-200 bg-red-50 text-red-950'
-                : 'border-emerald-200 bg-emerald-50 text-emerald-950'
+                ? 'border-red-500/40 bg-red-500/10 text-red-100'
+                : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100'
             }`}
           >
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex items-center gap-2.5">
-                {activeIncident.status === 'REPORTED' ? (
-                  <Radio className="h-5 w-5 text-red-600 shrink-0" />
-                ) : (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-                )}
-                <div>
-                  <div className="text-sm font-bold">
-                    {activeIncident.status === 'REPORTED'
-                      ? 'Distress Signal Broadcasted'
-                      : activeIncident.status === 'EN_ROUTE'
-                        ? `Responder Dispatched · ETA ${activeIncident.etaMinutes} min`
-                        : activeIncident.status === 'ARRIVED'
-                          ? 'Ambulance Arrived on Scene'
-                          : 'Incident Resolved'}
-                  </div>
-                  <div className="text-xs opacity-85 mt-0.5">
-                    ID <span className="font-mono font-semibold">{activeIncident.id}</span> ·{' '}
-                    {activeIncident.status === 'REPORTED'
-                      ? 'Awaiting command center acceptance and unit assignment'
-                      : `${activeIncident.assignedAmbulanceCode} en route`}
-                  </div>
+            <div className="flex items-start gap-2.5">
+              {activeIncident.status === 'REPORTED' ? (
+                <Radio className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+              ) : (
+                <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+              )}
+              <div>
+                <div className="text-sm font-bold">
+                  {activeIncident.status === 'REPORTED'
+                    ? 'Distress Signal Broadcasted'
+                    : activeIncident.status === 'EN_ROUTE'
+                      ? `Responder Dispatched · ETA ${activeIncident.etaMinutes} min`
+                      : activeIncident.status === 'ARRIVED'
+                        ? 'Ambulance Arrived on Scene'
+                        : 'Incident Resolved'}
+                </div>
+                <div className="text-xs text-slate-300 mt-0.5">
+                  ID <span className="font-mono font-semibold text-white">{activeIncident.id}</span> ·{' '}
+                  {activeIncident.status === 'REPORTED'
+                    ? 'Awaiting command center acceptance and unit assignment'
+                    : `${activeIncident.assignedAmbulanceCode} en route`}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Blinkit-style Live Route Map inside Mobile View */}
           <BlinkitRouteMap incident={activeIncident} hospitals={hospitals} compact />
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setActiveIncidentId(null)}
-              className="flex-1 min-h-[44px] rounded-full border border-slate-200 bg-[#F5F7FB] px-4 py-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors"
+              className="flex-1 min-h-[44px] rounded-lg border border-white/15 bg-[#121A2B] px-4 py-2.5 text-xs font-semibold text-slate-100 hover:bg-[#192338] transition-colors"
             >
               Send Another Signal
             </button>
             <a
               href="tel:112"
-              className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full bg-[#0F4C9C] px-5 py-2.5 text-xs font-semibold text-white hover:bg-[#0B3D80] transition-colors"
+              className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg bg-sky-400 px-5 py-2.5 text-xs font-semibold text-slate-950 hover:bg-sky-300 transition-colors"
             >
               <PhoneCall className="h-3.5 w-3.5" />
               <span>Dial 112</span>
@@ -338,14 +335,14 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
         /* Screen 2: Citizen Dashboard — Distress SOS & Secure Alert */
         <div className="p-4 space-y-4">
           {/* Segmented Mode Switcher */}
-          <div className="grid grid-cols-2 gap-1 rounded-full bg-[#F3F6FB] p-1">
+          <div className="grid grid-cols-2 gap-1 rounded-lg border border-white/[0.08] bg-[#06090F] p-1">
             <button
               type="button"
               onClick={() => setMode('SOS')}
-              className={`min-h-[38px] rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+              className={`min-h-[38px] rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
                 mode === 'SOS'
-                  ? 'bg-red-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-red-600 text-white'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               Distress SOS
@@ -353,28 +350,28 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
             <button
               type="button"
               onClick={() => setMode('SECURE_ALERT')}
-              className={`min-h-[38px] rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+              className={`min-h-[38px] rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
                 mode === 'SECURE_ALERT'
-                  ? 'bg-[#0F4C9C] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-sky-400 text-slate-950'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               Secure Alert (Anon)
             </button>
           </div>
 
-          {/* Captured GPS Coordinates Card */}
-          <div className="rounded-2xl bg-[#F5F7FB] p-3.5 space-y-2.5">
+          {/* Captured GPS Coordinates Well */}
+          <div className="rounded-xl bg-[#080D16] p-3.5 space-y-2.5 border border-white/[0.06]">
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
-                <MapPin className="h-3.5 w-3.5 text-[#0F4C9C]" />
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-200">
+                <MapPin className="h-3.5 w-3.5 text-sky-400" />
                 <span>Location Coordinates</span>
               </div>
               <button
                 type="button"
                 onClick={handleFetchRealGps}
                 disabled={locatingGps}
-                className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold text-[#0F4C9C] hover:bg-slate-50 transition-colors disabled:opacity-60"
+                className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-[#121A2B] px-3 py-1.5 text-[11px] font-semibold text-sky-300 hover:bg-[#192338] transition-colors disabled:opacity-60"
               >
                 {locatingGps ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -385,21 +382,20 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
               </button>
             </div>
 
-            <div className="text-sm font-semibold text-slate-900">{customCoords.label}</div>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono tabular-nums text-xs text-slate-600">
+            <div className="text-sm font-semibold text-white">{customCoords.label}</div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono tabular-nums text-xs text-slate-300">
               <span>{customCoords.latitude.toFixed(4)}° N</span>
               <span>{customCoords.longitude.toFixed(4)}° E</span>
               <span>±{customCoords.accuracyMeters.toFixed(1)} m</span>
-              <span className="text-slate-400">
+              <span className="text-slate-500">
                 {customCoords.isDemo ? 'Regional Preset' : 'Live GPS'}
               </span>
             </div>
 
-            {gpsNotice && <div className="text-xs text-[#0F4C9C]">{gpsNotice}</div>}
+            {gpsNotice && <div className="text-xs text-sky-400">{gpsNotice}</div>}
 
-            {/* Regional Location Quick Picker */}
             <div className="pt-1">
-              <label htmlFor="demo-loc-select" className="block text-[11px] font-medium text-slate-500 mb-1">
+              <label htmlFor="demo-loc-select" className="block text-[11px] font-medium text-slate-400 mb-1">
                 Location Preset (When Device GPS Is Unavailable)
               </label>
               <select
@@ -409,7 +405,7 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
                   const found = DEMO_LOCATIONS.find((d) => d.id === e.target.value);
                   if (found) handleSelectPreset(found);
                 }}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-800 focus:border-[#0F4C9C] focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0D131F] px-3 py-2 text-xs font-medium text-slate-100 focus:border-sky-400 focus:outline-none"
               >
                 {DEMO_LOCATIONS.map((loc) => (
                   <option key={loc.id} value={loc.id}>
@@ -422,17 +418,17 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
 
           {/* Emergency Category Buttons */}
           <div>
-            <div className="text-xs font-medium text-slate-700 mb-1.5">Emergency Category</div>
+            <div className="text-xs font-medium text-slate-300 mb-1.5">Emergency Category</div>
             <div className="flex flex-wrap gap-1.5">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setCategory(cat)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                     category === cat
-                      ? 'border-[#0F4C9C] bg-[#0F4C9C] text-white'
-                      : 'border-slate-200 bg-[#F7F9FC] text-slate-700 hover:bg-slate-100'
+                      ? 'border-sky-400 bg-sky-400 text-slate-950 font-semibold'
+                      : 'border-white/10 bg-[#080D16] text-slate-300 hover:border-white/25 hover:text-white'
                   }`}
                 >
                   {cat}
@@ -443,7 +439,7 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
 
           {/* Optional Note */}
           <div>
-            <label htmlFor="sos-notes" className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="sos-notes" className="block text-xs font-medium text-slate-300 mb-1">
               Brief Situation Note (Optional)
             </label>
             <input
@@ -456,32 +452,32 @@ export const CitizenMobileView: React.FC<CitizenMobileViewProps> = ({
                   ? 'e.g., Severe chest pain near metro gate 2'
                   : 'e.g., Two-wheeler collision at intersection'
               }
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-slate-900 focus:outline-none"
+              className="w-full rounded-lg border border-white/10 bg-[#080D16] px-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:border-sky-400 focus:outline-none"
             />
           </div>
 
           {submitError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
               {submitError}
             </div>
           )}
 
-          {/* Giant Thumb-Friendly SOS Trigger */}
+          {/* High-Contrast SOS Trigger */}
           <div className="relative pt-0.5">
             {mode === 'SOS' && !submitting && (
               <span
                 aria-hidden="true"
-                className="sos-pulse-ring pointer-events-none absolute inset-0 rounded-2xl border-2 border-red-500/70 bg-red-500/15"
+                className="sos-pulse-ring pointer-events-none absolute inset-0 rounded-xl border-2 border-red-500/70 bg-red-500/15"
               />
             )}
             <button
               type="button"
               onClick={handleSubmitAlert}
               disabled={submitting}
-              className={`relative w-full min-h-[60px] rounded-2xl px-5 py-4 text-white font-display font-bold text-base flex items-center justify-center gap-2.5 shadow-md active:scale-[0.98] transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:opacity-70 ${
+              className={`relative w-full min-h-[58px] rounded-xl px-5 py-4 font-display font-bold text-base flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 disabled:opacity-70 ${
                 mode === 'SOS'
-                  ? `bg-red-600 hover:bg-red-700 shadow-red-600/20 ${!submitting ? 'sos-trigger-active' : ''}`
-                  : 'bg-slate-900 hover:bg-slate-800 shadow-slate-900/15'
+                  ? `bg-red-600 text-white hover:bg-red-500 shadow-red-600/25 ${!submitting ? 'sos-trigger-active' : ''}`
+                  : 'bg-sky-400 text-slate-950 hover:bg-sky-300'
               }`}
             >
               {submitting ? (
